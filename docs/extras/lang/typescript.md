@@ -148,14 +148,14 @@ opts = {
           local action, uri, range = unpack(command.arguments)
 
           local function move(newf)
-            client.request("workspace/executeCommand", {
+            client:request("workspace/executeCommand", {
               command = command.command,
               arguments = { action, uri, range, newf },
             })
           end
 
           local fname = vim.uri_to_fname(uri)
-          client.request("workspace/executeCommand", {
+          client:request("workspace/executeCommand", {
             command = "typescript.tsserverRequest",
             arguments = {
               "getMoveToRefactoringFileSuggestions",
@@ -329,14 +329,14 @@ opts = {
             local action, uri, range = unpack(command.arguments)
 
             local function move(newf)
-              client.request("workspace/executeCommand", {
+              client:request("workspace/executeCommand", {
                 command = command.command,
                 arguments = { action, uri, range, newf },
               })
             end
 
             local fname = vim.uri_to_fname(uri)
-            client.request("workspace/executeCommand", {
+            client:request("workspace/executeCommand", {
               command = "typescript.tsserverRequest",
               arguments = {
                 "getMoveToRefactoringFileSuggestions",
@@ -418,7 +418,7 @@ end
 
 </Tabs>
 
-## [mini.icons](https://github.com/echasnovski/mini.icons)
+## [mini.icons](https://github.com/nvim-mini/mini.icons)
 
  Filetype icons
 
@@ -450,7 +450,7 @@ opts = {
 
 ```lua
 {
-  "echasnovski/mini.icons",
+  "nvim-mini/mini.icons",
   opts = {
     file = {
       [".eslintrc.js"] = { glyph = "󰱺", hl = "MiniIconsYellow" },
