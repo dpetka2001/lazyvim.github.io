@@ -17,6 +17,74 @@ They are only shown here for reference.
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+## [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
+
+<Tabs>
+
+<TabItem value="opts" label="Options">
+
+```lua
+opts = {}
+```
+
+</TabItem>
+
+
+<TabItem value="code" label="Full Spec">
+
+```lua
+{
+  "nvim-treesitter/nvim-treesitter",
+  version = false, -- last release is way too old and doesn't work on Windows
+  branch = "main",
+  build = ":TSUpdate",
+  lazy = true,
+  cmd = { "TSUpdate", "TSInstall", "TSLog", "TSUninstall" },
+  init = function() end,
+  ---@param opts TSConfig
+  config = function(_, opts)
+    if vim.fn.executable("tree-sitter") == 0 then
+      LazyVim.error("**treesitter-main** requires the `tree-sitter` executable to be installed")
+      return
+    end
+    if type(opts.ensure_installed) ~= "table" then
+      error("opts.ensure_installed must be a table")
+    end
+
+    local TS = require("nvim-treesitter")
+    TS.setup(opts)
+
+    local needed = LazyVim.dedup(opts.ensure_installed --[[@as string[] ]])
+    local installed = TS.get_installed("parsers")
+    local install = vim.tbl_filter(function(lang)
+      return not vim.tbl_contains(installed, lang)
+    end, needed)
+
+    if #install > 0 then
+      TS.install(install, { summary = true })
+    end
+
+    -- backwards compatibility with the old treesitter config for indent
+    if vim.tbl_get(opts, "indent", "enable") then
+      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+    end
+
+    -- backwards compatibility with the old treesitter config for highlight
+    if vim.tbl_get(opts, "highlight", "enable") then
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function()
+          pcall(vim.treesitter.start)
+        end,
+      })
+    end
+  end,
+}
+```
+
+</TabItem>
+
+</Tabs>
+
 ## [nvim-treesitter-textobjects](https://github.com/nvim-treesitter/nvim-treesitter-textobjects)
 
 <Tabs>
